@@ -1,0 +1,17 @@
+*/**/build
+*/**/debug
+*/**/dist
+*/**/*.logicdata
+*/**/nbproject/*.mk
+*/**/nbproject/*.properties
+*/**/nbproject/*.bash
+*/**/nbproject/private/
+
+
+*/**/Debug
+*/**/settings
+*/**/.generated_files
+*/**/*.custom_argvars
+*/**/*.dep
+
+!src/**/debug/
