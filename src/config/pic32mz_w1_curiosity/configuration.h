@@ -410,8 +410,11 @@ extern "C" {
 #define WOLF_CRYPTO_CB  // provide call-back support
 #define WOLFCRYPT_ONLY
 #define WOLFSSL_MICROCHIP_PIC32MZ
+// ---------- CRYPTO HARDWARE MANIFEST START ----------
 #define WOLFSSL_HAVE_MCHP_HW_CRYPTO_ECC_HW_BA414E
 #define WOLFSSL_HAVE_MCHP_BA414E_CRYPTO
+// ---------- CRYPTO HARDWARE MANIFEST END ----------
+// ---------- FUNCTIONAL CONFIGURATION START ----------
 #define NO_MD4
 #define WOLFSSL_SHA224
 #define NO_PIC32MZ_HASH
@@ -439,6 +442,7 @@ extern "C" {
 #define SINGLE_THREADED
 #define NO_ERROR_STRINGS
 #define NO_WOLFSSL_MEMORY
+// ---------- FUNCTIONAL CONFIGURATION END ----------
 
 
 /*** DNS Server Configuration ***/
@@ -461,8 +465,8 @@ extern "C" {
 
 #define SYS_WIFI_MAX_CBS					2
 #define SYS_WIFI_COUNTRYCODE        	   "GEN"
-#define SYS_WIFI_STA_SSID        			"DEMO_AP"
-#define SYS_WIFI_STA_PWD        			"password"
+#define SYS_WIFI_STA_SSID        			"LEIOT"
+#define SYS_WIFI_STA_PWD        			"microchip"
 #define SYS_WIFI_STA_AUTHTYPE				SYS_WIFI_WPAWPA2MIXED 
 #define SYS_WIFI_STA_AUTOCONNECT   			true
 
