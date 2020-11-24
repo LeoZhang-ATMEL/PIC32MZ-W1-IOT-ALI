@@ -4,7 +4,7 @@
 
 
 project: paho_mqtt_client
-creation_date: 2020-11-24T11:22:02.838+08:00[Asia/Shanghai]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
+creation_date: 2020-11-24T11:52:48.654+08:00[Asia/Shanghai]    # ISO 8601 format: https://www.w3.org/TR/NOTE-datetime
 operating_system: Windows 10
 mhc_mode: IDE            # [IDE|Standalone|Headless]
 mplabx_version: v5.45        # if MPLAB X plugin only
@@ -12,8 +12,9 @@ plugin_version: v3.6.1        # if MPLAB X plugin only
 compiler: XC32 (2.30)
 
 modules:
-    - {name: "csp", version: "v3.8.2"}
+    - {name: "cryptoauthlib", version: "v3.2.4"}
     - {name: "core", version: "v3.8.1"}
+    - {name: "csp", version: "v3.8.2"}
     - {name: "paho.mqtt.embedded-c", version: "v1.2.1"}
     - {name: "dev_packs", version: "v3.8.0"}
     - {name: "mhc", version: "v3.6.1"}

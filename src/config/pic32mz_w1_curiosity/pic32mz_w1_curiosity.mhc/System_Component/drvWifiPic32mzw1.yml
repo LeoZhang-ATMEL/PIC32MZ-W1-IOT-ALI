@@ -51,4 +51,4 @@ children:
         children:
         - {type: Value, value: NETCONFIG_MAC_Dependency}
 - type: ElementPosition
-  attributes: {x: '23', y: '347', id: drvWifiPic32mzw1}
+  attributes: {x: '20', y: '348', id: drvWifiPic32mzw1}

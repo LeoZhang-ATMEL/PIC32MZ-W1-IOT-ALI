@@ -50,8 +50,8 @@
 #include <stdbool.h>
 #include "crypto/crypto.h"
 #include "system/net/sys_net.h"
-#include "peripheral/nvm/plib_nvm.h"
 #include "system/time/sys_time.h"
+#include "peripheral/nvm/plib_nvm.h"
 #include "peripheral/coretimer/plib_coretimer.h"
 #include "system/mqtt/sys_mqtt.h"
 #include "peripheral/uart/plib_uart1.h"
@@ -72,6 +72,7 @@
 #include "peripheral/gpio/plib_gpio.h"
 #include "peripheral/evic/plib_evic.h"
 #include "wolfssl/wolfcrypt/port/pic32/crypt_wolfcryptcb.h"
+#include "peripheral/i2c/master/plib_i2c2_master.h"
 #include "driver/wifi/pic32mzw1/include/wdrv_pic32mzw_api.h"
 #include "system/wifi/sys_wifi.h"
 #include "system/console/sys_console.h"

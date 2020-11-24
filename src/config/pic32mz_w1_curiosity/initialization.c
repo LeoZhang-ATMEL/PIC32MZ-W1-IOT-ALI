@@ -622,6 +622,7 @@ const SYS_DEBUG_INIT debugInit =
 
 void SYS_Initialize ( void* data )
 {
+
     /* Start out with interrupts disabled before configuring any modules */
     __builtin_disable_interrupts();
 
@@ -640,6 +641,8 @@ void SYS_Initialize ( void* data )
 
     CORETIMER_Initialize();
 	UART1_Initialize();
+
+    I2C2_Initialize();
 
 
     /* Initialize the PIC32MZW1 Driver */

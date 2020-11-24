@@ -103,6 +103,13 @@ children:
       - type: User
         attributes: {value: DIGITAL}
   - type: String
+    attributes: {id: BSP_PIN_15_FUNCTION_TYPE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: SCL2}
+  - type: String
     attributes: {id: BSP_PIN_15_MODE}
     children:
     - type: Values
@@ -277,6 +284,13 @@ children:
       children:
       - type: User
         attributes: {value: DIGITAL}
+  - type: String
+    attributes: {id: BSP_PIN_86_FUNCTION_TYPE}
+    children:
+    - type: Values
+      children:
+      - type: User
+        attributes: {value: SDA2}
   - type: String
     attributes: {id: BSP_PIN_86_MODE}
     children:
@@ -600,6 +614,69 @@ children:
       - type: Dynamic
         attributes: {id: core, value: 'false'}
   - type: Boolean
+    attributes: {id: EVIC_59_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: EVIC_59_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: EVIC_59_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: I2C2_BUS_InterruptHandler}
+  - type: Boolean
+    attributes: {id: EVIC_60_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: Boolean
+    attributes: {id: EVIC_60_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: EVIC_60_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: I2C2_SLAVE_Handler}
+  - type: Boolean
+    attributes: {id: EVIC_61_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: Boolean
+    attributes: {id: EVIC_61_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: EVIC_61_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: I2C2_MASTER_InterruptHandler}
+  - type: Boolean
     attributes: {id: EVIC_83_ENABLE}
     children:
     - type: Values
@@ -767,6 +844,104 @@ children:
       children:
       - type: Dynamic
         attributes: {id: nvm, value: 'true'}
+  - type: Boolean
+    attributes: {id: I2C2_BUS_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'true'}
+  - type: Boolean
+    attributes: {id: I2C2_BUS_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: I2C2_BUS_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: I2C2_BUS_InterruptHandler}
+  - type: Boolean
+    attributes: {id: I2C2_BUS_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'true'}
+  - type: Boolean
+    attributes: {id: I2C2_CLOCK_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'true'}
+  - type: Integer
+    attributes: {id: I2C2_CLOCK_FREQUENCY}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: '100000000'}
+  - type: Boolean
+    attributes: {id: I2C2_MASTER_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'true'}
+  - type: Boolean
+    attributes: {id: I2C2_MASTER_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'false'}
+  - type: String
+    attributes: {id: I2C2_MASTER_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: I2C2_MASTER_InterruptHandler}
+  - type: Boolean
+    attributes: {id: I2C2_MASTER_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'true'}
+  - type: Boolean
+    attributes: {id: I2C2_SLAVE_INTERRUPT_ENABLE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'false'}
+  - type: Boolean
+    attributes: {id: I2C2_SLAVE_INTERRUPT_ENABLE_UPDATE}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: core, value: 'true'}
+  - type: String
+    attributes: {id: I2C2_SLAVE_INTERRUPT_HANDLER}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: I2C2_SLAVE_Handler}
+  - type: Boolean
+    attributes: {id: I2C2_SLAVE_INTERRUPT_HANDLER_LOCK}
+    children:
+    - type: Values
+      children:
+      - type: Dynamic
+        attributes: {id: i2c2, value: 'false'}
   - type: String
     attributes: {id: KEIL_STACK_HEAP_SIZE}
     children:
@@ -794,7 +969,7 @@ children:
     - type: Values
       children:
       - type: Dynamic
-        attributes: {id: core, value: '419627798'}
+        attributes: {id: core, value: '419496726'}
   - type: Boolean
     attributes: {id: RFMAC_INTERRUPT_ENABLE}
     children:

@@ -6,6 +6,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+/* Cryptoauth Device Library Header */
+#include "cryptoauthlib.h"
+extern ATCAIfaceCfg atecc608_0_init_data;
 
 #define PRODUCTKEY_MAXLEN           (20)
 #define DEVICENAME_MAXLEN           (32)
@@ -19,7 +22,11 @@
 #define TIMESTAMP_VALUE             "2524608000000"
 #define MQTT_CLINETID_KV            "|timestamp=2524608000000,_v=paho-c-1.0.0,securemode=3,signmethod=hmacsha256,lan=C|"
 
+#define APP_ATECC_SECURE
+
+#ifndef APP_ATECC_SECURE
 static void utils_hmac_sha256(const uint8_t *msg, uint32_t msg_len, const uint8_t *key, uint32_t key_len, uint8_t output[32]);
+#endif
 
 static void _hex2str(uint8_t *input, uint16_t input_len, char *output)
 {
@@ -73,14 +80,40 @@ int aiotMqttSign(const char *productKey, const char *deviceName, const char *dev
     memcpy(macSrc + strlen(macSrc), "timestamp", strlen("timestamp"));
     memcpy(macSrc + strlen(macSrc), TIMESTAMP_VALUE, strlen(TIMESTAMP_VALUE));
 
+#ifdef APP_ATECC_SECURE
+    ATCA_STATUS status;
+    status = atcab_init(&atecc608_0_init_data);
+    if (status) {
+        SYS_CONSOLE_PRINT("\natcab_init failed '%x'\r\n", status);
+    }
+
+    status = atcab_read_zone(ATCA_ZONE_DATA, 8, 0, 0,(uint8_t *)macRes, ATCA_BLOCK_SIZE);
+    if (status) {
+        SYS_CONSOLE_PRINT("\atcab_read_zone failed '%x'\r\n", status);
+    }
+    if (memcmp(macRes, deviceSecret, ATCA_BLOCK_SIZE)) {
+        status = atcab_write_zone(WRITE_ZONE_DATA, 8, 0, 0, (const uint8_t *)deviceSecret, ATCA_BLOCK_SIZE);
+        if (status) {
+            SYS_CONSOLE_PRINT("\atcab_write_zone failed '%x'\r\n", status);
+        }
+    }
+
+    status= atcab_sha_hmac((const uint8_t *)macSrc, strlen(macSrc), 8, (uint8_t *)macRes, SHA_MODE_TARGET_MSGDIGBUF);
+    if (status) {
+        SYS_CONSOLE_PRINT("\atcab_sha_hmac failed '%x'\r\n", status);
+    }
+    atcab_release();
+#else    
     utils_hmac_sha256((uint8_t *)macSrc, strlen(macSrc), (uint8_t *)deviceSecret,
                       strlen(deviceSecret), macRes);
+#endif
 
     memset(password, 0, PASSWORD_MAXLEN);
     _hex2str(macRes, sizeof(macRes), password);
     return 0;
 }
 
+#ifndef APP_ATECC_SECURE
 /******************************
  * hmac-sha256 implement below
  ******************************/
@@ -376,3 +409,4 @@ static void utils_hmac_sha256(const uint8_t *msg, uint32_t msg_len, const uint8_
     utils_sha256_update(&context, output, SHA256_DIGEST_SIZE);     /* then results of 1st hash */
     utils_sha256_finish(&context, output);                       /* finish up 2nd pass */
 }
+#endif

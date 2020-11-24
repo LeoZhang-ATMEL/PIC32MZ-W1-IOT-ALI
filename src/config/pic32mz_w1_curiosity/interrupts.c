@@ -64,6 +64,8 @@ void NVM_InterruptHandler( void );
 void UART1_FAULT_InterruptHandler( void );
 void UART1_RX_InterruptHandler( void );
 void UART1_TX_InterruptHandler( void );
+void I2C2_BUS_InterruptHandler( void );
+void I2C2_MASTER_InterruptHandler( void );
 void WDRV_PIC32MZW_TasksRFSMCISR( void );
 void WDRV_PIC32MZW_TasksRFMACISR( void );
 void WDRV_PIC32MZW_TasksRFTimer0ISR( void );
@@ -94,6 +96,16 @@ void __ISR(_UART1_RX_VECTOR, ipl1SRS) UART1_RX_Handler (void)
 void __ISR(_UART1_TX_VECTOR, ipl1SRS) UART1_TX_Handler (void)
 {
     UART1_TX_InterruptHandler();
+}
+
+void __ISR(_I2C2_BUS_VECTOR, ipl1SRS) I2C2_BUS_Handler (void)
+{
+    I2C2_BUS_InterruptHandler();
+}
+
+void __ISR(_I2C2_MASTER_VECTOR, ipl1SRS) I2C2_MASTER_Handler (void)
+{
+    I2C2_MASTER_InterruptHandler();
 }
 
 void __ISR(_RFSMC_VECTOR, ipl1SRS) RFSMC_Handler (void)
