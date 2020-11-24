@@ -69,12 +69,17 @@ SYS_MODULE_OBJ      g_sSysMqttHandle = SYS_MODULE_OBJ_INVALID;
 SYS_MQTT_Config     g_sTmpSysMqttCfg;
 static uint32_t     g_lastPubTimeout = 0;
 static uint32_t     PubMsgCnt = 0;
+static SYS_WIFI_CONFIG wificonfig;
+static bool         UserBtnState;
 
 #define MQTT_PERIOIDC_PUB_TIMEOUT   30 //Sec
 #define MQTT_PUB_TIMEOUT_CONST (MQTT_PERIOIDC_PUB_TIMEOUT * SYS_TMR_TickCounterFrequencyGet())
 
-//#define APP_CFG_WITH_CLOUD_API
-
+#define EXAMPLE_PRODUCT_KEY     "a1YlVZHpBjx"
+#define EXAMPLE_DEVICE_NAME     "XIuLwuKwpIJg5P4hjtMp"
+#define EXAMPLE_DEVICE_SECRET   "52e51c1461b97cef59b07e7e53514da8"
+extern int aiotMqttSign(const char *productKey, const char *deviceName, const char *deviceSecret,
+                     char clientId[150], char username[64], char password[65]);
 // *****************************************************************************
 // *****************************************************************************
 // Section: Local data
@@ -97,6 +102,16 @@ int32_t MqttCallback(SYS_MQTT_EVENT_TYPE eEventType, void *data, uint16_t len, v
             psMsg->topicName[psMsg->topicLength] = 0;
             SYS_CONSOLE_PRINT("\nMqttCallback(): Msg received on Topic: %s ; Msg: %s\r\n", 
 				psMsg->topicName, psMsg->message);
+            char *toggleToken = "\"YellowLEDStatus\":";
+            char *subString;
+
+            if ((subString = strstr((char*)psMsg->message, toggleToken))) {
+                if (subString[strlen(toggleToken)] == '1' ) {
+                    LED_GREEN_Set();
+                } else {
+                    LED_GREEN_Clear();
+                }
+            }
         }
         break;
         
@@ -172,22 +187,8 @@ int32_t MqttCallback(SYS_MQTT_EVENT_TYPE eEventType, void *data, uint16_t len, v
  */
 void APP_Initialize ( void )
 {
-#ifdef APP_CFG_WITH_CLOUD_API
-            SYS_MQTT_Config   *psMqttCfg;
-
-            memset(&g_sTmpSysMqttCfg, 0, sizeof(g_sTmpSysMqttCfg));
-            psMqttCfg = &g_sTmpSysMqttCfg;
-            psMqttCfg->sBrokerConfig.autoConnect = false;
-            psMqttCfg->sBrokerConfig.tlsEnabled = false;
-            strcpy(psMqttCfg->sBrokerConfig.brokerName, "broker.hivemq.com");
-            psMqttCfg->sBrokerConfig.serverPort = 1883;
-            psMqttCfg->subscribeCount = 1;
-            psMqttCfg->sSubscribeConfig[0].qos = 1;
-            strcpy(psMqttCfg->sSubscribeConfig[0].topicName, "MCHP/sample/b");
-            g_sSysMqttHandle = SYS_MQTT_Open(&g_sTmpSysMqttCfg, MqttCallback, NULL);    
-#else    
-            g_sSysMqttHandle = SYS_MQTT_Connect(NULL, MqttCallback, NULL); 
-#endif    
+    g_appData.state = APP_STATE_INIT_DONE;
+    SYS_CONSOLE_MESSAGE("Application: Paho MQTT Client\r\n");
 }
 
 bool checkTimeOut(uint32_t timeOutValue, uint32_t lastTimeOut)
@@ -200,22 +201,31 @@ bool checkTimeOut(uint32_t timeOutValue, uint32_t lastTimeOut)
 
 void Publish_PeriodicMsg(void)
 {
-    if (checkTimeOut(MQTT_PUB_TIMEOUT_CONST, g_lastPubTimeout))
+    if (checkTimeOut(MQTT_PUB_TIMEOUT_CONST, g_lastPubTimeout) || (UserBtnState != SW1_Get()))
     {
-        char        message[32] = {0};
+        char        message[200] = {0};
         SYS_MQTT_PublishTopicCfg	sMqttTopicCfg;
         int32_t retVal = SYS_MQTT_FAILURE;
+        UserBtnState = SW1_Get();
 
         //reset the timer
         g_lastPubTimeout = 0;
         
         /* All Params other than the message are initialized by the config provided in MHC*/
-        strcpy(sMqttTopicCfg.topicName, SYS_MQTT_DEF_PUB_TOPIC_NAME);
-        sMqttTopicCfg.topicLength = strlen(SYS_MQTT_DEF_PUB_TOPIC_NAME);
+        sprintf(sMqttTopicCfg.topicName, "/sys/%s/%s/thing/event/property/post", EXAMPLE_PRODUCT_KEY, EXAMPLE_DEVICE_NAME);
+        sMqttTopicCfg.topicLength = strlen(sMqttTopicCfg.topicName);
         sMqttTopicCfg.retain = SYS_MQTT_DEF_PUB_RETAIN;
         sMqttTopicCfg.qos = SYS_MQTT_DEF_PUB_QOS;
 
-        sprintf(message, "message_%d\r\n", PubMsgCnt);
+        int rawTemperature = 50;
+        uint8_t ledYellowStatus = 0;
+    	sprintf(message,
+	                  "{\"id\":\"1\",\"version\":\"1.0\",\"params\":{\"YellowLEDStatus\":%u,\"UserBtn\":%u,\"Temp\":\"%d."
+	                  "%02d\"},\"method\":\"thing.event.property.post\"}",
+	                  ledYellowStatus,
+	                  !UserBtnState, /* Idle = VCC, Pressed = 0V */
+	                  rawTemperature / 100,
+	                  abs(rawTemperature) % 100);
 
         retVal = SYS_MQTT_Publish(g_sSysMqttHandle, 
                             &sMqttTopicCfg,
@@ -238,9 +248,67 @@ void Publish_PeriodicMsg(void)
  */
 void APP_Tasks ( void )
 {
-    Publish_PeriodicMsg();
-    SYS_MQTT_Task(g_sSysMqttHandle);
+    switch (g_appData.state) 
+	{
+        case APP_STATE_INIT_DONE:
+        {
+            if(SYS_WIFI_CtrlMsg(sysObj.syswifi, SYS_WIFI_GETCONFIG, &wificonfig, sizeof(wificonfig)) == SYS_WIFI_SUCCESS)
+            {
+                if (SYS_WIFI_STA == wificonfig.mode)
+                {
+                    SYS_CONSOLE_PRINT("%s(): Device mode = STA \r\n", __func__);
+                    g_appData.state = APP_STATE_MODE_STA;
+                }
+                else
+                {
+                    SYS_CONSOLE_PRINT("%s(): Device mode = AP \r\n", __func__);
+                    g_appData.state = APP_STATE_MODE_AP;                
+                }
+            }                
+            break;
+        }
 
+        case APP_STATE_MODE_AP:
+        {
+            break;
+        }
+        
+        case APP_STATE_MODE_STA:
+        {
+            SYS_MQTT_Config   *psMqttCfg;
+
+            memset(&g_sTmpSysMqttCfg, 0, sizeof(g_sTmpSysMqttCfg));
+            psMqttCfg = &g_sTmpSysMqttCfg;
+            psMqttCfg->sBrokerConfig.autoConnect = false;
+            psMqttCfg->sBrokerConfig.tlsEnabled = false;
+            psMqttCfg->sBrokerConfig.keepAliveInterval = 60; /* Need change to 60, otherwise the Ali Cloud will response MQTT connect ACK with error code 2: identifier rejected. */
+            sprintf(psMqttCfg->sBrokerConfig.brokerName, "%s.iot-as-mqtt.cn-shanghai.aliyuncs.com", EXAMPLE_PRODUCT_KEY);
+         
+            aiotMqttSign(EXAMPLE_PRODUCT_KEY, EXAMPLE_DEVICE_NAME, EXAMPLE_DEVICE_SECRET,
+                    psMqttCfg->sBrokerConfig.clientId,
+                    psMqttCfg->sBrokerConfig.username,
+                    psMqttCfg->sBrokerConfig.password);
+            psMqttCfg->sBrokerConfig.serverPort = 1883;
+            psMqttCfg->subscribeCount = 1;
+            psMqttCfg->sSubscribeConfig[0].qos = 1;
+            sprintf(psMqttCfg->sSubscribeConfig[0].topicName, "/sys/%s/%s/thing/service/property/set", EXAMPLE_PRODUCT_KEY, EXAMPLE_DEVICE_NAME);
+            g_sSysMqttHandle = SYS_MQTT_Connect(&g_sTmpSysMqttCfg, MqttCallback, NULL);    
+            g_appData.state = APP_STATE_SERVICE_TASK;
+            break;
+        }
+        
+        case APP_STATE_SERVICE_TASK:
+        {
+            Publish_PeriodicMsg();
+            SYS_MQTT_Task(g_sSysMqttHandle);
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+    
     /* Check the application's current state. */
     SYS_CMD_READY_TO_READ();
 }

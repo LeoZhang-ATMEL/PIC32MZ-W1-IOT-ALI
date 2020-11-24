@@ -62,6 +62,10 @@ typedef enum
 {
     /* Application's state machine's initial state. */
     APP_STATE_INIT_DONE=0,
+    APP_STATE_WAIT_FOR_GETCONFIG,
+    APP_STATE_MODE_AP,
+    APP_STATE_MODE_STA,
+    APP_STATE_SERVICE_TASK,
 } APP_STATES;
 
 typedef struct

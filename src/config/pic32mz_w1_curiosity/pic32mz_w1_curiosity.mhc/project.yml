@@ -678,13 +678,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 0EB6BBB380B565989B56271B5CA3AC3F
-- generatedChecksum: EB7F0F839F6D89EAF439AFF0BECB195B
+- generatedChecksum: AD3136341DBAD06417A8A8E264F890BE
   logicalPath: config\pic32mz_w1_curiosity\peripheral\gpio
   name: plib_gpio.c
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: SOURCE
-  userChecksum: EB7F0F839F6D89EAF439AFF0BECB195B
+  userChecksum: AD3136341DBAD06417A8A8E264F890BE
 - generatedChecksum: 302870B553042ED5294917554809F0B6
   logicalPath: config\pic32mz_w1_curiosity\peripheral\nvm
   name: plib_nvm.c
@@ -2617,13 +2617,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 7F65C8062DF1367D5D6B401389DA270A
-- generatedChecksum: 3C52CEA231878411E3950ADD556AF20C
+- generatedChecksum: A4CE4366D962D6B11D37B89E5F7D8DD0
   logicalPath: config\pic32mz_w1_curiosity\peripheral\gpio
   name: plib_gpio.h
   physicalPath: peripheral\gpio
   security: NON_SECURE
   type: HEADER
-  userChecksum: 3C52CEA231878411E3950ADD556AF20C
+  userChecksum: A4CE4366D962D6B11D37B89E5F7D8DD0
 - generatedChecksum: FBB2DEFAADE0488ACAFA5C5FB807B149
   logicalPath: config\pic32mz_w1_curiosity\peripheral\nvm
   name: plib_nvm.h
