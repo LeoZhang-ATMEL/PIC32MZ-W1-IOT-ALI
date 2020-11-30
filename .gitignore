@@ -14,4 +14,4 @@
 */**/*.custom_argvars
 */**/*.dep
 
-!src/**/debug/
+!*/**/src/**/debug/
