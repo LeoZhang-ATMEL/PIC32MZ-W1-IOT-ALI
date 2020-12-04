@@ -27,27 +27,30 @@ To build the application, refer to the following table and open the project usin
 ## Running the Application
 
 1. Open the project
-2. Currently MQTT Service is configured to run a MQTT Client in Secured mode to connect to 'PRODUCT-KEY'.iot-as-mqtt.cn-shanghai.aliyuncs.com on the mqtt secured port (1883). In case the user wants to change this config, please make the changes in the C Macro [`EXAMPLE_PRODUCT_KEY/EXAMPLE_DEVICE_NAME/EXAMPLE_DEVICE_SECRET` in the app.c](https://github.com/LeoZhang-ATMEL/PIC32MZ-W1-IOT-ALI/blob/master/src/app.c#L78), and MQTT server address at [psMqttCfg->sBrokerConfig.brokerName](https://github.com/LeoZhang-ATMEL/PIC32MZ-W1-IOT-ALI/blob/master/src/app.c#L285)
+2. Currently MQTT Service is configured to run a MQTT Client in Secured mode to connect to 'PRODUCT-KEY'.iot-as-mqtt.cn-shanghai.aliyuncs.com on the mqtt secured port (1883). In case the user wants to change this config, please make the changes in the C Macro [`EXAMPLE_PRODUCT_KEY/EXAMPLE_DEVICE_NAME/EXAMPLE_DEVICE_SECRET` in the app.c](firmware/src/app.c#L78), and MQTT server address at [psMqttCfg->sBrokerConfig.brokerName](firmware/src/app.c#L285)
+![ali_device_key](images/ali_device_key.png)
 
-3. Build and program the generated code into the hardware using its IDE
-4. Open the Terminal application (Ex.:Tera term) on the computer
-5. Connect to the "USB to UART" COM port and configure the serial settings as follows:
+3. The WIFI credentials can be changed at source code at [configuration.h](firmware/src/config/pic32mz_w1_curiosity/configuration.h#L468) ![MHC](images/wifi_password.png)
+   It also can be changed after programmed. Provision the device using the following CLI Command "wifiprov set 0 1 "GEN" 0 1 3 "DEMO_AP" "password"" for Home AP with SSID DEMO_AP, and password as 'password'. More details on the CLI command can be found here.
+<br>![Console](images/mqtt_client_provision_console.png)
+4. Another way to change the WIFI credentials was through the Harmony 3 Configurator
+<br>![MHC](images/mhc_wifi_configurator.png)
+
+5. Build and program the generated code into the hardware using its IDE
+6. Open the Terminal application (Ex.:Tera term) on the computer
+7. Connect to the "USB to UART" COM port and configure the serial settings as follows:
     - Baud : 115200
     - Data : 8 Bits
     - Parity : None
     - Stop : 1 Bit
     - Flow Control : None
 
-6.	The WIFI credentials can be setup on the WIFI configurator. ![MHC](images/mhc_wifi_configurator.png)
-7.	The WIFI credentials also can be changed after programmed. Provision the device using the following CLI Command "wifiprov set 0 1 "GEN" 0 1 3 "DEMO_AP" "password"" for Home AP with SSID DEMO_AP, and password as 'password'. More details on the CLI command can be found here.
-![Console](images/mqtt_client_provision_console.png)
-
 8.	The Board will connect to Home AP and then as per the default MQTT Service configuration, it shall connect to 'PRODUCT-KEY'.iot-as-mqtt.cn-shanghai.aliyuncs.com and publish messages on the topic '/sys/PRODUC-TKEY/DEVICE-NAME/thing/event/property/post' periodically every 30 sec. It also subscribes to topic '/sys/PRODUC-TKEY/DEVICE-NAME/thing/service/property/set'
-![Console](images/mqtt_client_publish_console.png)
+<br>![Console](images/mqtt_client_publish_console.png)
 
 9. Login into the [Ali IoTStudio](https://iot.aliyun.com/), test the device connection.
 10. Press button SW1 will trigger publish a MQTT package to update the button state. And the button state can be viewed at Ali IoTStudio Dashboard
-![PIC32MZ W1 Curiosity Board - SW1](images/PIC32-WFI32E-Curiosity-Board-Front-SW1.jpg)
+<BR>![PIC32MZ W1 Curiosity Board - SW1](images/PIC32-WFI32E-Curiosity-Board-Front-SW1.jpg)
 ![Ali IoTStudio Device State](images/btn_pressed_web.png)
 ![Press SW1 Console output](images/btn_pressed_console.png)
 
@@ -57,4 +60,7 @@ To build the application, refer to the following table and open the project usin
 ![LED On Console output](images/led_on_console.png)
 
 12. Now you are all set. On the next, you can launch Harmony3 configurator to add a new feature.
+     The project was based on paho_mqtt_client example, add ATECC608 secure element driver and several PINs for the PIC32MZ W1 Curiosity Board.
+![ATECC608](images/configurator_root.png)
+![GPIO](images/configurator_pins.png)
 Note: The secured tcp connection may require the user to modify WolfSSL component settings in MHC depending on the security settings of the site/ server he is trying to access.
